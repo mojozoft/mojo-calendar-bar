@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><title>Mojo Calendar Bar — logo</title>
+<style>
+  body{margin:0;padding:32px;font-family:-apple-system,"Sukhumvit Set",sans-serif;background:#f4f2ef;color:#222;width:1136px}
+  h2{margin:28px 0 12px;font-size:20px}
+  .dock{display:flex;gap:18px;align-items:end;padding:16px 22px;border-radius:26px;margin-bottom:14px;width:fit-content}
+  .dock.light{background:rgba(255,255,255,.6);box-shadow:0 2px 12px rgba(0,0,0,.12)}
+  .dock.dark{background:#2a2530}
+  .dock .ours{outline:2px dashed #F26A1B;outline-offset:4px;border-radius:14px}
+  table{border-collapse:collapse}
+  td,th{padding:8px 14px;text-align:center;vertical-align:middle;font-size:13px}
+  th{color:#777;font-weight:500}
+  .card{display:inline-block;width:250px;margin:0 14px 14px 0;padding:14px;border-radius:14px;background:#fff;vertical-align:top;font-size:13px;line-height:1.45}
+  .card b{font-size:15px}
+  .dk{background:#1d1b20;color:#eee}
+  .mono{color:#222}
+</style></head><body>
+<div id="out"></div>
+<script>
+const OR = "#F26A1B";
+const SQ = (fill) => `<rect x="0" y="0" width="100" height="100" rx="22.4" fill="${fill}"/>`;
+// pin วงแหวน (วงนอก - รูใน) ด้วย evenodd
+const pin = (x,y,r,h) => `M${x-r},${y}a${r},${r} 0 1,0 ${2*r},0a${r},${r} 0 1,0 ${-2*r},0Z M${x-h},${y}a${h},${h} 0 1,0 ${2*h},0a${h},${h} 0 1,0 ${-2*h},0Z`;
+// M ต้นฉบับ Mojozoft (viewBox 100)
+const M_ORIG = (c) => `<g color="${c}"><path d="M14.82,72.04L19.18,29.96M25.12,28.15L44.88,51.85M55.12,51.85L74.88,28.15M80.82,29.96L85.18,72.04" fill="none" stroke="currentColor" stroke-width="9"/>
+<path fill="currentColor" fill-rule="evenodd" d="${[[14,80],[20,22],[50,58],[80,22],[86,80]].map(([x,y])=>pin(x,y,10,4.2)).join(' ')}"/></g>`;
+// เส้นเชื่อมระหว่าง pin ที่หยุดที่ขอบ pin (กันก้านทับรู)
+function link(pts, r, sw, c){
+  let d = "";
+  for (let i=0;i<pts.length-1;i++){
+    const [x1,y1]=pts[i],[x2,y2]=pts[i+1],dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,g=r-2;
+    d += `M${(x1+ux*g).toFixed(2)},${(y1+uy*g).toFixed(2)}L${(x2-ux*g).toFixed(2)},${(y2-uy*g).toFixed(2)}`;
+  }
+  return `<path d="${d}" fill="none" stroke="${c}" stroke-width="${sw}"/>
+<path fill="${c}" fill-rule="evenodd" d="${pts.map(([x,y])=>pin(x,y,r,r*0.42)).join(' ')}"/>`;
+}
+
+// ✅ โลโก้ตัวจริง (ใช้ทำ AppIcon) — แก้ที่นี่ที่เดียว
+function FINAL(){
+  const n=3, area=56, gap=6, size=(area-gap*(n-1))/n, x0=(100-area)/2, y0=34;
+  let out = SQ(OR) + `<path d="M0,22.4A22.4,22.4 0 0 1 22.4,0H77.6A22.4,22.4 0 0 1 100,22.4V25H0Z" fill="#fff" opacity=".2"/>`;
+  for (let i=0;i<n;i++) for (let j=0;j<n;j++){
+    const on = i===1 && j===1;
+    out += `<rect x="${(x0+i*(size+gap)).toFixed(2)}" y="${(y0+j*(size+gap)).toFixed(2)}" width="${size.toFixed(2)}" height="${size.toFixed(2)}" rx="${(size*0.28).toFixed(2)}" fill="#fff" opacity="${on?1:.45}"/>`;
+  }
+  return out;
+}
+// หน้าเดือนแบบปรับจำนวนช่องได้ (พื้นส้ม + หัวขาวจาง) · skip = ช่องว่างต้นแถวแรก · lastKeep = จำนวนช่องแถวท้าย
+function MONTH2({cols, rows, skip, lastKeep, today, sz, todaySz, y0=47, pitchY=15, round=false, x0=18, x1=82}){
+  const pitchX=(x1-x0)/(cols-1);
+  let out = SQ(OR) + `<path d="M0,22.4A22.4,22.4 0 0 1 22.4,0H77.6A22.4,22.4 0 0 1 100,22.4V27H0Z" fill="#fff" opacity=".2"/>`;
+  for (let r=0;r<rows;r++) for (let c=0;c<cols;c++){
+    if (r===0 && c<skip) continue;
+    if (r===rows-1 && c>=lastKeep) continue;
+    const on = c===today[0] && r===today[1], w = on ? todaySz : sz, cx=x0+c*pitchX, cy=y0+r*pitchY;
+    out += `<rect x="${(cx-w/2).toFixed(2)}" y="${(cy-w/2).toFixed(2)}" width="${w}" height="${w}" rx="${(round ? w/2 : w*0.28).toFixed(2)}" fill="#fff" opacity="${on?1:.6}"/>`;
+  }
+  return out;
+}
+// หน้าเดือน 7 คอลัมน์ × 4 แถว: แถวแรกเริ่มที่คอลัมน์ 2 · แถวท้ายจบที่คอลัมน์ 4 · วันนี้ = [col,row]
+function MONTH({style}){
+  const page = style==="page";
+  const cols=7, rows=4, x0=16, x1=84, pitch=(x1-x0)/(cols-1), sz=8;
+  const y0 = page ? 42 : 40, ypitch = page ? 12 : 13;
+  const today=[3,2];
+  let out = page
+    ? `<rect width="100" height="100" rx="22.4" fill="url(#fb)"/><path d="M0,22.4A22.4,22.4 0 0 1 22.4,0H77.6A22.4,22.4 0 0 1 100,22.4V29H0Z" fill="url(#fh)"/>`
+    : SQ(OR) + `<path d="M0,22.4A22.4,22.4 0 0 1 22.4,0H77.6A22.4,22.4 0 0 1 100,22.4V27H0Z" fill="#fff" opacity=".2"/>`; // หัวปฏิทินขาวจาง
+  const ink = page ? "#2b2b2b" : "#fff";
+  for (let r=0;r<rows;r++) for (let c=0;c<cols;c++){
+    if (r===0 && c<2) continue;          // เดือนเริ่มกลางสัปดาห์
+    if (r===rows-1 && c>4) continue;     // เดือนจบก่อนสุดสัปดาห์
+    const cx=x0+c*pitch, cy=y0+r*ypitch, on = c===today[0] && r===today[1];
+    const s2 = on ? 13 : sz;
+    out += `<rect x="${(cx-s2/2).toFixed(2)}" y="${(cy-s2/2).toFixed(2)}" width="${s2}" height="${s2}" rx="${(s2*0.3).toFixed(2)}" fill="${on ? (page?OR:"#fff") : ink}" opacity="${on?1:(page? .85 : .6)}"/>`;
+  }
+  return out;
+}
+// ช่องสี่เหลี่ยมมน n×n บนพื้นส้ม (วันนี้ = ขาวทึบ ช่องอื่นจาง)
+function TILES({n, today}){
+  const area=58, gap= n===4 ? 5 : 6, size=(area-gap*(n-1))/n, x0=(100-area)/2, y0=(100-area)/2;
+  let out = SQ(OR);
+  for (let i=0;i<n;i++) for (let j=0;j<n;j++){
+    const on = today && i===today[0] && j===today[1];
+    out += `<rect x="${(x0+i*(size+gap)).toFixed(2)}" y="${(y0+j*(size+gap)).toFixed(2)}" width="${size.toFixed(2)}" height="${size.toFixed(2)}" rx="${(size*0.28).toFixed(2)}" fill="#fff" opacity="${on?1:(today? .45 : .92)}"/>`;
+  }
+  return out;
+}
+// ตารางจุด 7×5 บนพื้นส้ม (วันนี้ = วงแหวนหมุด)
+function GRID({today}){
+  let out = SQ(OR);
+  for (let i=0;i<7;i++) for (let j=0;j<5;j++){
+    const x=20+i*10, y=28+j*11;
+    if (today && i===today[0] && j===today[1])
+      out += `<path fill="#fff" fill-rule="evenodd" d="${pin(x,y,6.8,2.8)}"/>`;
+    else out += `<circle cx="${x}" cy="${y}" r="3.3" fill="#fff" opacity="${today? .55 : .92}"/>`;
+  }
+  return out;
+}
+// หน้าปฏิทินยิ้ม: พื้นขาวไล่เงา + หัวส้ม + ตา/ปาก
+function FACE({eye, smile, ink}){
+  const body = `<defs><linearGradient id="fb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e9e7e4"/></linearGradient>
+<linearGradient id="fh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A3D"/><stop offset="1" stop-color="#EE5F12"/></linearGradient></defs>`
+    + `<rect width="100" height="100" rx="22.4" fill="url(#fb)"/>`
+    + `<path d="M0,22.4A22.4,22.4 0 0 1 22.4,0H77.6A22.4,22.4 0 0 1 100,22.4V27H0Z" fill="url(#fh)"/>`;
+  const eyes = eye==="ring"
+    ? `<path fill="${ink}" fill-rule="evenodd" d="${pin(33,49,9.5,3.8)} ${pin(67,49,9.5,3.8)}"/>`
+    : `<ellipse cx="33" cy="49" rx="8" ry="9.5" fill="${ink}"/><ellipse cx="67" cy="49" rx="8" ry="9.5" fill="${ink}"/>`;
+  const mouth = smile==="chain"
+    ? link([[24,68],[38,81],[62,81],[76,68]], 6.4, 6.5, ink)
+    : `<path d="M28,70Q50,93 72,70" fill="none" stroke="${ink}" stroke-width="7" stroke-linecap="round"/>
+       <path fill="${ink}" fill-rule="evenodd" d="${pin(24,67,7,2.9)} ${pin(76,67,7,2.9)}"/>`;
+  return body + eyes + mouth;
+}
+const LOGOS = [
+
+ // ── รอบ 10 (21ต.ค.69): ✅ เจ้าของเลือก L (ช่องมน 3×3 + วันนี้) + "มีคาดหัว" ──
+ { id:"final", th:"T · ✅ ตัวจริง: ช่องมน 3×3 + หัวจาง",
+   idea:"พื้นส้ม · แถบหัวปฏิทินขาวจาง · ช่องมน 3×3 · ช่องกลางขาวทึบ = วันนี้",
+   tone:"เรียบ ชัดทุกขนาด · สี Mojozoft · หัวจางบอกว่าเป็นปฏิทิน",
+   risk:"3×3 คล้ายตาราง XO ถ้าไม่มีหัว ⇒ หัวจางห้ามถอด",
+   svg: FINAL() },
+
+ // ── รอบ 9 (21ต.ค.69): "ลดเหลือ 3 ช่อง" (ต่อจาก R) ──
+ { id:"month3-dots", th:"S · หน้าเดือน 3 คอลัมน์ วงกลม",
+   idea:"3 คอลัมน์ 3 แถว วงกลม · แถวแรกเว้นต้น 1 · แถวท้ายจบก่อน 1 · วันนี้อยู่กลาง",
+   tone:"เรียบที่สุด วงใหญ่ ย่อ 16 px ยังเห็นชัด",
+   risk:"3×3 เกือบสมมาตร ⇒ ความเป็นหน้าเดือนเหลือแค่การเว้นหัว-ท้าย กับหัวจาง ๆ",
+   svg: MONTH2({cols:3, rows:3, skip:1, lastKeep:2, today:[1,1], sz:13.5, todaySz:19, y0:41, pitchY:18, round:true, x0:28, x1:72}) },
+
+ // ── รอบ 8 (21ต.ค.69): "ช่องเปลี่ยนเป็นทรงกลม" (ต่อจาก Q) ──
+ { id:"month4-dots", th:"R · หน้าเดือน 4 คอลัมน์ วงกลม",
+   idea:"แบบ Q แต่ช่องเป็นวงกลม · วันนี้วงขาวทึบใหญ่",
+   tone:"นุ่มขึ้น เป็นมิตร · วงกลมเข้ากับหมุดในโลโก้ Mojozoft",
+   risk:"วงกลมเรียงห่าง ๆ อาจอ่านเป็นลูกเต๋า/ปุ่มมากกว่าช่องวัน (หัวจาง ๆ ช่วยดึงกลับมาเป็นปฏิทิน)",
+   svg: MONTH2({cols:4, rows:3, skip:1, lastKeep:3, today:[1,1], sz:12.5, todaySz:17.5, y0:41, pitchY:18, round:true}) },
+
+ // ── รอบ 7 (21ต.ค.69): "เอาสัก 4 ช่องพอ · เพิ่มระยะห่างแนวตั้งอีกนิด" (ต่อจาก P) ──
+ { id:"month4-airy", th:"Q · หน้าเดือน 4 คอลัมน์ แถวห่าง",
+   idea:"4 คอลัมน์ 3 แถว · ระยะห่างแนวตั้งเพิ่มจาก 15 → 18 · เว้นหัว 1 ช่อง ท้าย 1 ช่อง · วันนี้ขาวทึบใหญ่",
+   tone:"โปร่ง ช่องใหญ่ ย่อแล้วยังเห็นเป็นช่อง",
+   risk:"ช่องน้อย ⇒ ต้องพึ่งหัวปฏิทินจาง ๆ ช่วยบอกว่าเป็นปฏิทิน",
+   svg: MONTH2({cols:4, rows:3, skip:1, lastKeep:3, today:[1,1], sz:12.5, todaySz:17.5, y0:41, pitchY:18}) },
+
+ // ── รอบ 6 (21ต.ค.69): "ลดจำนวนช่อง ไม่ให้แน่นไป" (ต่อจาก M) ──
+ { id:"month5", th:"O · หน้าเดือน 5×3",
+   idea:"แบบ M แต่เหลือ 5 คอลัมน์ 3 แถว ช่องใหญ่ขึ้น · ยังเว้นหัว-ท้าย · วันนี้ขาวทึบใหญ่",
+   tone:"โปร่งขึ้น แต่ยังมีจังหวะหน้าเดือน",
+   risk:"5 คอลัมน์ไม่ใช่สัปดาห์จริง (คนจับผิดได้ แต่ที่ขนาดไอคอนแทบไม่มีใครนับ)",
+   svg: MONTH2({cols:5, rows:3, skip:1, lastKeep:3, today:[2,1], sz:11.5, todaySz:16}) },
+ { id:"month4", th:"P · หน้าเดือน 4×3",
+   idea:"เหลือ 4 คอลัมน์ 3 แถว ช่องใหญ่สุด · เว้นหัว 1 ช่อง ท้าย 1 ช่อง",
+   tone:"โปร่งสุด ย่อ 16 px ยังเห็นเป็นช่อง",
+   risk:"ช่องน้อย ⇒ ความรู้สึก 'หน้าเดือน' ลดลง เริ่มคล้ายแป้นปุ่ม",
+   svg: MONTH2({cols:4, rows:3, skip:1, lastKeep:3, today:[1,1], sz:13.5, todaySz:18.5}) },
+
+ // ── รอบ 5 (21ต.ค.69): "จุดเริ่มเว้น จุดท้ายเว้น ให้ดูเป็นปฏิทิน" (ref = หน้าขาวหัวแดง จุด 7 คอลัมน์) ──
+ { id:"month-orange", th:"M · หน้าเดือน พื้นส้ม",
+   idea:"พื้นส้มทั้งไอคอน · ช่องมน 7 คอลัมน์ 4 แถว แถวแรกเริ่มเว้น แถวท้ายจบก่อน = หน้าเดือนจริง · วันนี้ขาวทึบใหญ่กว่า",
+   tone:"อ่านออกว่าปฏิทินจากจังหวะเว้นหัว-ท้าย · สีส้มล้วนเป็นของ Mojozoft",
+   risk:"7 คอลัมน์ทำให้ช่องเล็ก ⇒ 16 px เห็นเป็นลายจุด เหลือแค่ช่องวันนี้",
+   svg: MONTH({style:"orange"}) },
+ { id:"month-page", th:"N · หน้าเดือน หน้าขาวหัวส้ม",
+   idea:"แบบรูปตัวอย่าง: หน้าขาวหัวส้ม ช่องมนเทาเข้ม · วันนี้เป็นช่องส้ม",
+   tone:"อ่านเป็นปฏิทินชัดที่สุด",
+   risk:"ใกล้ ref + Calendar ของ Apple (หน้าขาวหัวสี) ⇒ ใน Dock อาจกลืน มีแค่สีส้มที่ต่าง",
+   svg: MONTH({style:"page"}) },
+
+ // ── รอบ 4 (21ต.ค.69): "ลดความหนาแน่นของจุด · จุดเป็นสี่เหลี่ยมมน" ──
+ { id:"tiles4", th:"J · ช่องมน 4×4",
+   idea:"พื้นส้ม · ช่องสี่เหลี่ยมมน 16 ช่อง = หน้าปฏิทิน (เข้าชุดกับไอคอนแถบเมนูที่เป็นกรอบมน)",
+   tone:"โปร่งขึ้นมาก · ย่อแล้วยังเห็นเป็นช่อง",
+   risk:"ไม่มีจุดเด่น ⇒ อาจอ่านเป็นแอปเครื่องคิดเลข/แป้นปุ่ม",
+   svg: TILES({n:4, today:null}) },
+ { id:"tiles4-today", th:"K · ช่องมน 4×4 + วันนี้",
+   idea:"แบบ J แต่ช่องอื่นจาง ช่องเดียวขาวทึบ = วันนี้",
+   tone:"อ่านเป็นปฏิทินที่มีวันที่ถูกเลือก · ตาไปหยุดที่ช่องขาวก่อน",
+   risk:"ถ้าช่องจางเกิน ที่ 16 px จะเห็นแค่ช่องขาวช่องเดียว",
+   svg: TILES({n:4, today:[2,1]}) },
+ { id:"tiles3-today", th:"L · ช่องมน 3×3 + วันนี้",
+   idea:"ลดเหลือ 9 ช่อง ช่องใหญ่ · ช่องกลางขาวทึบ = วันนี้",
+   tone:"โปร่งสุด เรียบสุด ย่อ 16 px ยังเห็นชัด",
+   risk:"3×3 ไม่ค่อยเหมือนปฏิทิน (อาจอ่านเป็นเกม XO / แอปเปิดแอป)",
+   svg: TILES({n:3, today:[1,1]}) },
+
+ // ── รอบ 3 (21ต.ค.69): เจ้าของเลือก A แต่ "เอาตัว M ออก" ──
+ { id:"grid-only", th:"H · ตารางจุดล้วน",
+   idea:"พื้นส้มแบบโลโก้แม่ · จุดขาว 7 คอลัมน์ × 5 แถว = หน้าเดือนในปฏิทิน",
+   tone:"เรียบ สะอาด เป็นสี Mojozoft · ไม่ต้องอธิบาย",
+   risk:"ไม่มีอะไรบอกว่าเป็น Mojozoft นอกจากสีส้ม · ที่ 16 px จุดรวมเป็นลายผ้า",
+   svg: GRID({today:null}) },
+ { id:"grid-today", th:"I · ตารางจุด + วันนี้",
+   idea:"แบบ H แต่มี 1 จุดเป็นวงแหวนใหญ่ (หมุดแบบโลโก้) = วันนี้",
+   tone:"บอกว่าเป็นปฏิทินชัดขึ้น + วงแหวนเป็นลายเซ็นหมุดของ Mojozoft",
+   risk:"เพิ่มชิ้นมา 1 ชิ้น ⇒ ไม่เรียบเท่า H",
+   svg: GRID({today:[4,2]}) },
+
+ // ── รอบ 2 (21ต.ค.69): เจ้าของสั่ง "ผสม" หน้าปฏิทินยิ้ม (ref) + ลายเซ็น Mojozoft ──
+ { id:"face-pin", th:"E · หน้ายิ้มหมุด",
+   idea:"หน้าปฏิทินขาวหัวส้ม · ตา = หมุดวงแหวนแบบโลโก้ · ปากยิ้ม = ก้านต่อหมุด 4 ตัว (โซ่แบบตัว M)",
+   tone:"น่ารัก เป็นมิตร + มีลายเซ็นหมุดของ Mojozoft ชัด",
+   risk:"ตาวงแหวนอาจอ่านเป็นหน้าตกใจ · ที่ 16 px หมุดในปากเบลอเป็นเส้นหนา",
+   svg: FACE({eye:"ring", smile:"chain", ink:"#2b2b2b"}) },
+ { id:"face-arm", th:"F · หน้ายิ้มแขนกล",
+   idea:"ตาทึบแบบ ref · ปากเป็นเส้นโค้งเดียว ปลายสองข้างมีหมุด (เหมือนแขนกลของตัว M)",
+   tone:"ใกล้ ref ที่สุด อ่านออกทันทีว่าหน้ายิ้ม · หมุดปลายปากบอกว่าเป็น Mojozoft",
+   risk:"ลายเซ็น Mojozoft เหลือแค่หมุด 2 จุด ⇒ ใกล้ ref มาก อาจถูกมองว่าเลียนแบบ",
+   svg: FACE({eye:"solid", smile:"arm", ink:"#2b2b2b"}) },
+ { id:"face-orange", th:"G · หน้ายิ้มหมุด สีส้มล้วน",
+   idea:"แบบ E แต่ตาและปากเป็นสีส้มเดียวกับหัว ⇒ ทั้งไอคอนมีแค่ส้ม + ขาว เหมือนโลโก้แม่",
+   tone:"เป็นสีแบรนด์ล้วน ดูเป็นชุดเดียวกับโลโก้ Mojozoft",
+   risk:"ส้มบนขาวคอนทราสต์ต่ำกว่าดำ ⇒ หน้าจางกว่าแบบ E เมื่อย่อ",
+   svg: FACE({eye:"ring", smile:"chain", ink:OR}) },
+ { id:"grid", th:"A · M ลากผ่านตารางวัน",
+   idea:"พื้นส้มแบบโลโก้แม่ · จุดจาง ๆ 7 คอลัมน์ = ตารางวันในปฏิทิน · ตัว M เชื่อม 5 วันเข้าด้วยกัน",
+   tone:"เป็นครอบครัว Mojozoft ทันที (ส้ม + M หมุด) · ไม่ต้องมีรูปปฏิทินก็รู้ว่าเป็นเรื่องวัน",
+   risk:"ที่ 16 px จุดตารางหายหมด เหลือแค่ M ⇒ เล็ก ๆ ดูเหมือนโลโก้บริษัทเฉย ๆ",
+   svg:(()=>{ const P=[[20,75],[30,25],[50,50],[70,25],[80,75]], key=new Set(P.map(p=>p.join())); let dots="";
+     for(let i=0;i<7;i++)for(let j=0;j<5;j++){const x=20+i*10,y=25+j*12.5; if(!key.has(x+','+y)) dots+=`<circle cx="${x}" cy="${y}" r="2.1" fill="#fff" opacity=".38"/>`;}
+     return SQ(OR)+dots+link(P,7,5.5,"#fff"); })() },
+ { id:"page", th:"B · หน้าปฏิทิน + M",
+   idea:"พื้นส้ม · หน้าปฏิทินสีขาวมีห่วง 2 ห่วง (ห่วง = หมุดแบบในโลโก้) · ตัว M ส้มอยู่บนหน้า",
+   tone:"อ่านออกทันทีว่าเป็นแอปปฏิทิน + มีลายเซ็น Mojozoft",
+   risk:"ห่วงกับหมุดเป็นรูปเดียวกัน ⇒ ภาพแน่น ที่ 16 px ห่วงกับ M อาจเบลอรวมกัน",
+   svg:(()=>{ const s=.5, tx=50-50*s, ty=63-51*s;
+     return SQ(OR)+`<rect x="18" y="22" width="64" height="62" rx="9" fill="#fff"/>
+<rect x="18" y="22" width="64" height="13" rx="9" fill="#fff"/><path d="M18,35H82" stroke="${OR}" stroke-width="2.5" opacity=".35"/>
+<path fill="#fff" fill-rule="evenodd" d="${pin(35,20,6,2.5)} ${pin(65,20,6,2.5)}"/>
+<path fill="${OR}" d="M${35-2.5},20a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0Z M${65-2.5},20a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0Z" opacity="0"/>
+<g transform="translate(${tx},${ty}) scale(${s})">${M_ORIG(OR)}</g>`; })() },
+ { id:"tile", th:"C · ก้อนทึบเจาะ M",
+   idea:"ต่อยอดจากไอคอนแถบเมนูที่เลือกแล้ว (กรอบทึบมุมมน) · ก้อนขาวบนพื้นส้ม เจาะเป็นตัว M",
+   tone:"ไอคอนแอป = ไอคอนบนแถบเมนู เป็นชุดเดียวกัน · เรียบ ย่อแล้วยังเป็นก้อนชัด",
+   risk:"ก้อนขาวมีหัวแถบแล้วเจาะ M ⇒ ถ้าเส้น M บางไป จะอ่านเป็นก้อนเปล่า",
+   svg:(()=>{ const s=.56, tx=50-50*s, ty=60-51*s;
+     return SQ(OR)+`<mask id="mk"><rect width="100" height="100" fill="#fff"/><g transform="translate(${tx},${ty}) scale(${s})">${M_ORIG("#000")}</g></mask>
+<rect x="16" y="18" width="68" height="66" rx="13" fill="#fff" mask="url(#mk)"/>
+<rect x="16" y="18" width="68" height="9" rx="4" fill="${OR}" opacity=".0"/>`; })() },
+ { id:"safe", th:"D · ตัวเทียบ (ตั้งใจให้แพ้)",
+   idea:"ปฏิทินขาวหัวส้มมีเลข 21 แบบแอปปฏิทินทั่วไป",
+   tone:"ปลอดภัย ใครเห็นก็รู้ว่าปฏิทิน",
+   risk:"แทบเหมือน Calendar ของ Apple (ขาวหัวแดง + เลขวัน) ⇒ วางใน Dock แล้วกลืน ไม่มีอะไรบอกว่าเป็นของ Mojozoft",
+   svg: SQ("#fff")+`<path d="M0,22.4A22.4,22.4 0 0 1 22.4,0H77.6A22.4,22.4 0 0 1 100,22.4V30H0Z" fill="${OR}"/>
+<text x="50" y="22" font-size="13" font-weight="700" fill="#fff" text-anchor="middle" font-family="-apple-system">ต.ค.</text>
+<text x="50" y="80" font-size="48" font-weight="300" fill="#222" text-anchor="middle" font-family="-apple-system">21</text>` },
+];
+
+// ไอคอนอื่นใน Dock (ตัวเทียบ)
+const OTHERS = [
+  SQ("#fff")+`<path d="M0,22.4A22.4,22.4 0 0 1 22.4,0H77.6A22.4,22.4 0 0 1 100,22.4V30H0Z" fill="#f33"/><text x="50" y="80" font-size="50" fill="#222" text-anchor="middle" font-family="-apple-system">21</text>`,
+  SQ("#06C755")+`<rect x="22" y="30" width="56" height="38" rx="18" fill="#fff"/>`,
+  SQ("#1E8CF0")+`<circle cx="50" cy="50" r="26" fill="#fff"/><path d="M50,26 50,50 66,58" stroke="#1E8CF0" stroke-width="5" fill="none"/>`,
+  SQ("#222")+`<path d="M30,35l14,15-14,15" stroke="#fff" stroke-width="7" fill="none"/><path d="M50,66h22" stroke="#fff" stroke-width="7"/>`,
+  SQ("#FFD43B")+`<rect x="25" y="25" width="50" height="50" rx="6" fill="#fff"/>`,
+];
+const svg = (inner, px) => `<svg width="${px}" height="${px}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+
+let h = "";
+for (const theme of ["light","dark"]) {
+  h += `<h2>Dock ${theme==="light"?"พื้นสว่าง":"พื้นมืด"} (64 px)</h2>`;
+  for (const L of LOGOS) {
+    const icons = [OTHERS[0], OTHERS[1], L.svg, OTHERS[2], OTHERS[3], OTHERS[4]];
+    h += `<div class="dock ${theme}">` + icons.map((s,i)=>`<span class="${i===2?'ours':''}">${svg(s,64)}</span>`).join("") + `<span style="color:${theme==='dark'?'#ccc':'#555'};font-size:13px;align-self:center">${L.th}</span></div>`;
+  }
+}
+h += `<h2>ด่านย่อ (ขนาดจริงบนจอ)</h2><table><tr><th></th><th>128</th><th>64</th><th>32</th><th>16</th><th>16 บนพื้นมืด</th></tr>`;
+for (const L of LOGOS) h += `<tr><td style="text-align:left">${L.th}</td>`+[128,64,32,16].map(p=>`<td>${svg(L.svg,p)}</td>`).join("")+`<td style="background:#1d1b20">${svg(L.svg,16)}</td></tr>`;
+h += `</table><h2>การ์ด</h2>`;
+for (const L of LOGOS) h += `<div class="card">${svg(L.svg,96)}<br><b>${L.th}</b><br>💡 ${L.idea}<br>✅ ${L.tone}<br>⚠️ ${L.risk}</div>`;
+document.getElementById("out").innerHTML = h;
+</script></body></html>
