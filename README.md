@@ -2,6 +2,8 @@
 
 ปฏิทินบนแถบเมนู macOS ภาษาไทย/อังกฤษ สลับ พ.ศ./ค.ศ. ได้ในคลิกเดียว
 
+โดย [Mojozoft](https://mojozoft.com) · [ช่วยเหลือ](https://mojozoft.com/support/) · [Help (English)](https://mojozoft.com/en/support/) · [ความเป็นส่วนตัว](https://mojozoft.com/privacy/)
+
 <p align="center">
   <img src="docs/screenshot-th.png" width="296" alt="Mojo Calendar Bar ภาษาไทย พ.ศ.">
   &nbsp;
