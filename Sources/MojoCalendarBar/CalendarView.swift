@@ -127,6 +127,9 @@ struct CalendarView: View {
                 Divider()
                 Button(lang.copyFull(era)) { copy(ThaiDate.fullDate(selected ?? clock.today, era: era, lang: lang)) }
                 Button(lang.copyShort) { copy(ThaiDate.shortDate(selected ?? clock.today, era: era, lang: lang)) }
+                Divider()
+                Button(lang.help) { NSWorkspace.shared.open(lang.siteURL("support/")) }
+                Button(lang.website) { NSWorkspace.shared.open(lang.siteURL("")) }
             } label: { Image(systemName: "ellipsis") }
             .menuStyle(.button)
             .buttonStyle(.borderless)

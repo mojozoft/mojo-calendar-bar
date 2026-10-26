@@ -48,6 +48,12 @@ enum Lang: String {
     var showWeekNumbers: String { self == .th ? "แสดงเลขสัปดาห์" : "Show week numbers" }
     var launchAtLogin: String { self == .th ? "เปิดเองตอนเข้าเครื่อง" : "Open at login" }
     var copyShort: String { self == .th ? "คัดลอกวันที่แบบสั้น" : "Copy short date" }
+    var help: String { self == .th ? "ช่วยเหลือ" : "Help" }
+    var website: String { self == .th ? "เว็บไซต์ Mojozoft" : "Mojozoft website" }
+    /// หน้าเว็บ mojozoft.com ตามภาษา (อังกฤษอยู่ใต้ /en/)
+    func siteURL(_ path: String) -> URL {
+        URL(string: "https://mojozoft.com/" + (self == .th ? "" : "en/") + path)!
+    }
     var formatHelp: String { self == .th ? "กดเพื่อเปลี่ยนรูปแบบ" : "Click to change format" }
     var switchHelp: String { self == .th ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย" }
     func copyFull(_ era: Era) -> String { self == .th ? "คัดลอกวันที่ (\(era.label(self)))" : "Copy date (\(era.label(self)))" }
