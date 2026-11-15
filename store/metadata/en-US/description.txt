@@ -1,0 +1,24 @@
+A small, fast calendar that lives in your menu bar — today's date is always one glance away.
+
+THAI CALENDAR, BUILT IN
+• Waxing and waning moon for every day (e.g. "Waxing day 15, lunar month 12")
+• Buddhist holy days (Wan Phra) marked with a small dot
+• Thai public holidays and important days: Makha Bucha, Visakha Bucha, Asalha Bucha, Buddhist Lent, Songkran, Loy Krathong and more
+• Each feature can be switched on or off on its own
+
+ANY YEAR SYSTEM
+• Gregorian (AD), Buddhist Era (BE), Japanese (Reiwa) and Republic of China (Minguo)
+• One click to switch between your local era and AD
+
+MADE FOR EVERYONE
+• 10 languages: English, Thai, Japanese, Korean, Simplified and Traditional Chinese, German, French, Spanish and Portuguese (Brazil)
+• Month and weekday names follow your language; the week starts on the day your region uses
+• Optional week numbers
+• Copy today's date in full or short form
+
+LIGHT AND PRIVATE
+• Native macOS app with the system glass look
+• Works offline. Collects nothing, needs no account and asks for no permissions
+• Open at login, if you like
+
+Thai holidays do not include substitute days or one-off holidays announced by the cabinet. Holy days follow the common (Mahanikaya) calendar.

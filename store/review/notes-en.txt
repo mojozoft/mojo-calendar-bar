@@ -1,0 +1,12 @@
+Mojo Calendar Bar is a menu bar app (no Dock icon). After launch, click the calendar icon showing today's date in the menu bar to open the calendar.
+
+What it adds over the built-in macOS clock/calendar:
+- Thai lunar dates (waxing/waning moon) for every day, calculated on device
+- Buddhist holy days (Wan Phra) marked under the day number
+- Thai public holidays and Buddhist observances (Makha/Visakha/Asalha Bucha, Buddhist Lent, Songkran, Loy Krathong)
+- Year systems: Gregorian, Buddhist Era, Japanese (Reiwa), Republic of China (Minguo)
+- UI in 10 languages with locale-aware week start and week numbers
+
+To see the Thai features in any locale: click "..." at the bottom-left > Thai calendar > turn on Buddhist holy days / Thai holidays / Waxing and waning moon. Click any day to see its lunar date and holiday names. The language button (e.g. "EN") switches the UI language.
+
+No account, no network access, no data collection. "Open at login" uses SMAppService and is off until the user turns it on.
