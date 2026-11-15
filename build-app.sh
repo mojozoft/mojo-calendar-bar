@@ -11,6 +11,8 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$ROOT/.build/release/MojoCalendarBar" "$APP/Contents/MacOS/"
 cp "$ROOT/Resources/Info.plist" "$APP/Contents/"
 cp "$ROOT/Resources/AppIcon.icns" "$APP/Contents/Resources/"
+# คำแปล: String Catalog → <lang>.lproj (แอปเปิด lproj ตามภาษาที่เลือกในแอปเอง)
+xcrun xcstringstool compile "$ROOT/Resources/Localizable.xcstrings" --output-directory "$APP/Contents/Resources"
 codesign --force --sign - "$APP"
 echo "built: $APP"
 

@@ -10,14 +10,15 @@
 ./build-app.sh --install  # ปิดตัวเก่า → ก๊อปไป /Applications → เปิด (ตัวที่เจ้าของใช้จริง)
 python3 design/icon/make_icon.py   # สร้าง Resources/AppIcon.icns ใหม่ (ถ้าแก้โลโก้)
 ```
-ทดสอบ logic วันที่แบบไม่ต้องเปิดแอป: ก๊อป `ThaiDate.swift` + `main.swift` เล็ก ๆ ไป scratchpad แล้ว `swiftc` (ดูประวัติ session 21ต.ค.69)
+ทดสอบ logic วันที่แบบไม่ต้องเปิดแอป: ก๊อป `DateText.swift` + `<lang>.lproj` (จาก `xcstringstool compile`) ไว้ข้างไบนารี + `main.swift` เล็ก ๆ ไป scratchpad แล้ว `swiftc` (ดูประวัติ session 21ต.ค.69)
 
 ## โครงไฟล์
 | ไฟล์ | หน้าที่ |
 |---|---|
 | `Sources/.../App.swift` | MenuBarExtra · ไอคอนแถบเมนู (เลขวันเจาะในกรอบทึบมน) · DayClock (ข้ามวัน/ตื่นจากหลับ) · launch at login |
-| `Sources/.../CalendarView.swift` | หน้าต่างปฏิทิน · ค่าที่จำไว้ใช้ `@AppStorage` (`era` `lang` `titleFormat` `showWeekNumbers`) |
-| `Sources/.../ThaiDate.swift` | `Era` · `Lang` (ข้อความทุกคำบนจอ ไทย/อังกฤษ) · จัดรูปแบบวันที่ — คำนวณ Gregorian เสมอแล้ว +543 |
+| `Sources/.../CalendarView.swift` | หน้าต่างปฏิทิน · ค่าที่จำไว้ใช้ `@AppStorage` (`era` `lang` `firstWeekday` `titleFormat` `showWeekNumbers` · ว่าง/`system`/0 = ตามเครื่อง) |
+| `Sources/.../DateText.swift` | `Era` (ค.ศ./พ.ศ./ญี่ปุ่น/ไต้หวัน) · `AppLanguage` · `Strings` · `DateText` — กริดคำนวณ Gregorian เสมอ · ข้อความวันที่ให้ `DateFormatter` + แม่แบบจัดตามภาษา (ห้ามกลับไป hardcode ชื่อเดือน) |
+| `Resources/Localizable.xcstrings` | คำแปล 10 ภาษา · `build-app.sh` คอมไพล์เป็น `<lang>.lproj` · เพิ่มภาษา = เพิ่มใน xcstrings + `AppLanguage.supported` + `CFBundleLocalizations` |
 | `Sources/.../Glass.swift` | ทำพื้นหน้าต่างเป็น Liquid Glass (ส่วนที่เปราะที่สุด — อ่านคอมเมนต์ก่อนแตะ) |
 | `design/logo/index.html` | หน้าเทียบโลโก้ทุกแบบ A–T · `FINAL()` = ตัวจริง |
 

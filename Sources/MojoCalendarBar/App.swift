@@ -11,7 +11,7 @@ struct MojoCalendarBarApp: App {
             CalendarView()
                 .environmentObject(clock)
         } label: {
-            Image(nsImage: MenuIcon.make(day: ThaiDate.calendar.component(.day, from: clock.today)))
+            Image(nsImage: MenuIcon.make(day: Calendar.localGregorian.component(.day, from: clock.today)))
         }
         .menuBarExtraStyle(.window)
     }
@@ -39,7 +39,7 @@ final class DayClock: ObservableObject {
 
     private func tick() {
         let now = Date()
-        if !ThaiDate.calendar.isDate(now, inSameDayAs: today) { today = now }
+        if !Calendar.localGregorian.isDate(now, inSameDayAs: today) { today = now }
     }
 }
 

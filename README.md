@@ -44,6 +44,9 @@
   · ⚠️ ซ่อนซ้ำเฉพาะ effect view ที่จำไว้ตอนเปิดครั้งแรก — ไล่หาใหม่หลัง SwiftUI วาดแล้วจะไปซ่อน Divider + วงวันนี้ด้วย (เคยหายทั้งคู่)
 - `Menu` แบบ `.borderlessButton` บน macOS 26 มีพื้นกลมโผล่ ⇒ `.menuStyle(.button)` + `.buttonStyle(.borderless)`
 
+- ภาษาอื่น + ถิ่นไทย (เช่น `en_TH`) ระบบถือว่าปีเริ่มต้นคือ พ.ศ. แล้วแปะศักราชเองทุกรูปแบบ ("10/2026 A") ⇒ locale ของ `DateFormatter` ต้องมี `@calendar=<ระบบปี>`
+- กฎพหูพจน์ (stringsdict) หายถ้าแปลงผลของ `localizedString` เป็น Swift `String` ก่อน format ⇒ ผ่าน `NSString(format:locale:arguments:)`
+
 ## ไอคอนแอป
 - แบบที่เลือก = **T** (ช่องมน 3×3 · ช่องกลาง = วันนี้ · หัวปฏิทินขาวจาง · พื้นส้ม Mojozoft) — ทุกแบบที่ลองอยู่ใน `design/logo/index.html`
 - สร้างใหม่: `python3 design/icon/make_icon.py` → `Resources/AppIcon.icns` (ตัวเลขต้องตรงกับ `FINAL()` ในหน้าเทียบ)
