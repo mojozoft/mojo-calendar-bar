@@ -3,3 +3,5 @@ build/
 .DS_Store
 design/icon/AppIcon.iconset/
 BOARD.md
+MojoCalendarBar.xcodeproj/
+build-store/
