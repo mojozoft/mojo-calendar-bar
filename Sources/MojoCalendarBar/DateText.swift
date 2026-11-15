@@ -191,6 +191,22 @@ struct DateText {
         n > 0 ? strings.format("In %lld days", n) : strings.format("%lld days ago", -n)
     }
 
+    /// "ขึ้น 6 ค่ำ เดือน 12" · "แรม 1 ค่ำ เดือน 8 หลัง" · "Waxing day 6, lunar month 12"
+    func lunarText(_ l: LunarDate) -> String {
+        if language == "th" {
+            let m: String
+            switch l.month {
+            case 1: m = "อ้าย"
+            case 2: m = "ยี่"
+            default: m = " \(l.month)" + (l.isLeapMonthYear && l.month == 8 ? (l.isSecondEighth ? " หลัง" : " แรก") : "")
+            }
+            return "\(l.isWaxing ? "ขึ้น" : "แรม") \(l.phaseDay) ค่ำ เดือน\(m)"
+        }
+        var m = "\(l.month)"
+        if l.isLeapMonthYear && l.month == 8 { m = strings(l.isSecondEighth ? "8 (second)" : "8 (first)") }
+        return strings.format(l.isWaxing ? "Waxing day %lld, lunar month %@" : "Waning day %lld, lunar month %@", l.phaseDay, m)
+    }
+
     /// หน้าเว็บ mojozoft.com (ไทยอยู่ราก · ภาษาอื่นใช้หน้าอังกฤษใต้ /en/)
     func siteURL(_ path: String) -> URL {
         URL(string: "https://mojozoft.com/" + (language == "th" ? "" : "en/") + path)!

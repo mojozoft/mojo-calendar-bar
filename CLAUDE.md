@@ -19,6 +19,7 @@ python3 design/icon/make_icon.py   # สร้าง Resources/AppIcon.icns ใ�
 | `Sources/.../CalendarView.swift` | หน้าต่างปฏิทิน · ค่าที่จำไว้ใช้ `@AppStorage` (`era` `lang` `firstWeekday` `titleFormat` `showWeekNumbers` · ว่าง/`system`/0 = ตามเครื่อง) |
 | `Sources/.../DateText.swift` | `Era` (ค.ศ./พ.ศ./ญี่ปุ่น/ไต้หวัน) · `AppLanguage` · `Strings` · `DateText` — กริดคำนวณ Gregorian เสมอ · ข้อความวันที่ให้ `DateFormatter` + แม่แบบจัดตามภาษา (ห้ามกลับไป hardcode ชื่อเดือน) |
 | `Resources/Localizable.xcstrings` | คำแปล 10 ภาษา · `build-app.sh` คอมไพล์เป็น `<lang>.lproj` · เพิ่มภาษา = เพิ่มใน xcstrings + `AppLanguage.supported` + `CFBundleLocalizations` |
+| `Sources/.../ThaiLunar.swift` · `ThaiHolidays.swift` | จันทรคติไทย (port pythaidate · ⛔ ห้ามแก้ตารางด้วยมือ) · วันพระ · วันสำคัญ — README §จันทรคติ |
 | `Sources/.../Glass.swift` | ทำพื้นหน้าต่างเป็น Liquid Glass (ส่วนที่เปราะที่สุด — อ่านคอมเมนต์ก่อนแตะ) |
 | `design/logo/index.html` | หน้าเทียบโลโก้ทุกแบบ A–T · `FINAL()` = ตัวจริง |
 

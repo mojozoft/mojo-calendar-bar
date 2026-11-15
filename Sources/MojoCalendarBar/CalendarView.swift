@@ -9,6 +9,10 @@ struct CalendarView: View {
     @AppStorage("firstWeekday") private var firstWeekday = 0
     @AppStorage("titleFormat") private var titleFormat = 0
     @AppStorage("showWeekNumbers") private var showWeekNumbers = false
+    // ปฏิทินไทย — เปิด/ปิดแยกกัน · "" = ตามเครื่อง (ภาษาไทยหรืออยู่ไทย = เปิด) · "1" เปิด · "0" ปิด
+    @AppStorage("showHolyDays") private var holyRaw = ""
+    @AppStorage("showThaiHolidays") private var holidaysRaw = ""
+    @AppStorage("showLunar") private var lunarRaw = ""
     @State private var month = Date()
     @State private var selected: Date?
     @State private var launchAtLogin = LaunchAtLogin.isEnabled
@@ -18,6 +22,17 @@ struct CalendarView: View {
     private var text: DateText { DateText(language: language, era: era, firstWeekday: firstWeekday) }
     private var t: Strings { text.strings }
     private var cal: Calendar { text.calendar }
+
+    private var thaiDefault: Bool { language == "th" || Locale.current.region?.identifier == "TH" }
+    private func flag(_ raw: String) -> Bool { raw.isEmpty ? thaiDefault : raw == "1" }
+    private func flagBinding(_ raw: Binding<String>) -> Binding<Bool> {
+        Binding(get: { flag(raw.wrappedValue) }, set: { raw.wrappedValue = $0 ? "1" : "0" })
+    }
+    private var showHolyDays: Bool { flag(holyRaw) }
+    private var showHolidays: Bool { flag(holidaysRaw) }
+    private var showLunar: Bool { flag(lunarRaw) }
+    private var anyThai: Bool { showHolyDays || showHolidays || showLunar }
+    private func thaiInfo(_ d: Date) -> ThaiHolidays.DayInfo? { anyThai ? ThaiHolidays.info(d, calendar: cal) : nil }
 
     /// ตัวเลือกบนปุ่มสลับ: ค.ศ. + ระบบปีที่เลือกอยู่/ประจำถิ่น · ไม่มีระบบอื่น ⇒ ซ่อนปุ่ม (เลือกได้ในเมนู ⋯)
     private var eraChoices: [Era] {
@@ -49,7 +64,11 @@ struct CalendarView: View {
         .padding(16)
         .frame(width: 296) // ความกว้างคงที่ — หน้าต่างเปลี่ยนขนาดแล้วกรอบเดิมของระบบโผล่
         .glassBackground()
-        .onAppear { month = clock.today; selected = nil }
+        .onAppear {
+            month = clock.today
+            selected = nil
+            launchAtLogin = LaunchAtLogin.isEnabled // ผู้ใช้อาจไปปิดใน System Settings มา
+        }
     }
 
     // MARK: หัว: เดือน ปี + ปุ่มเลื่อน
@@ -105,15 +124,26 @@ struct CalendarView: View {
     private func dayCell(_ date: Date, inMonth: Bool) -> some View {
         let isToday = cal.isDate(date, inSameDayAs: clock.today)
         let isSelected = selected.map { cal.isDate(date, inSameDayAs: $0) } ?? false
-        let isSunday = cal.component(.weekday, from: date) == 1
+        let thai = thaiInfo(date)
+        let isRed = cal.component(.weekday, from: date) == 1 || (showHolidays && thai?.isPublicHoliday == true)
+        let isHoly = showHolyDays && thai?.isHolyDay == true
         return Text(verbatim: "\(cal.component(.day, from: date))")
             .font(.system(size: 12, weight: isToday ? .bold : .regular).monospacedDigit())
-            .foregroundStyle(isToday ? Color.white : (isSunday ? Color.red : Color.primary))
-            .opacity(inMonth ? 1 : 0.3)
+            .foregroundStyle(isToday ? Color.white : (isRed ? Color.red : Color.primary))
             .frame(width: 28, height: 26)
             .background(
                 Circle().fill(isToday ? Color.accentColor : (isSelected ? Color.secondary.opacity(0.25) : .clear))
             )
+            // วันพระ = จุดเล็กใต้เลข
+            .overlay(alignment: .bottom) {
+                if isHoly {
+                    Circle().fill(isToday ? Color.white : Color.orange).frame(width: 4, height: 4).offset(y: -2)
+                }
+            }
+            .opacity(inMonth ? 1 : 0.3)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(accessibilityText(date, thai: thai))
+            .accessibilityAddTraits(.isButton)
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
             .onTapGesture {
@@ -128,6 +158,18 @@ struct CalendarView: View {
         let diff = cal.dateComponents([.day], from: cal.startOfDay(for: clock.today), to: cal.startOfDay(for: d)).day ?? 0
         return VStack(alignment: .leading, spacing: 3) {
             Text(text.fullDate(d)).font(.system(size: 13, weight: .medium))
+            if let thai = thaiInfo(d) {
+                let lunar = showLunar ? text.lunarText(thai.lunar) : nil
+                let holy = showHolyDays && thai.isHolyDay ? t("Buddhist holy day") : nil
+                if let line = [lunar, holy].compactMap({ $0 }).joined(separator: " · ").nonEmpty {
+                    Text(line).font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+                if showHolidays, !thai.holidays.isEmpty {
+                    Text(thai.holidays.map { t($0.key) }.joined(separator: " · "))
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(thai.isPublicHoliday ? Color.red : Color.orange)
+                }
+            }
             if diff != 0 {
                 Text(text.daysAway(diff))
                     .font(.system(size: 11)).foregroundStyle(.secondary)
@@ -143,6 +185,11 @@ struct CalendarView: View {
                 Toggle(t("Show week numbers"), isOn: $showWeekNumbers)
                 Toggle(t("Open at login"), isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, on in LaunchAtLogin.set(on) }
+                Menu(t("Thai calendar")) {
+                    Toggle(t("Buddhist holy days"), isOn: flagBinding($holyRaw))
+                    Toggle(t("Thai holidays"), isOn: flagBinding($holidaysRaw))
+                    Toggle(t("Waxing and waning moon"), isOn: flagBinding($lunarRaw))
+                }
                 Menu(t("Year system")) {
                     Picker("", selection: Binding(get: { era.rawValue }, set: { eraRaw = $0 })) {
                         ForEach(Era.allCases) { e in
@@ -204,6 +251,17 @@ struct CalendarView: View {
         }
     }
 
+    /// VoiceOver: "วันอาทิตย์ที่ 15 พฤศจิกายน พ.ศ. 2569, วันพระ, วันลอยกระทง"
+    private func accessibilityText(_ date: Date, thai: ThaiHolidays.DayInfo?) -> String {
+        var parts = [text.fullDate(date)]
+        if let thai {
+            if showLunar { parts.append(text.lunarText(thai.lunar)) }
+            if showHolyDays && thai.isHolyDay { parts.append(t("Buddhist holy day")) }
+            if showHolidays { parts += thai.holidays.map { t($0.key) } }
+        }
+        return parts.joined(separator: ", ")
+    }
+
     private func shift(_ n: Int) {
         month = cal.date(byAdding: .month, value: n, to: month) ?? month
     }
@@ -212,4 +270,8 @@ struct CalendarView: View {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(s, forType: .string)
     }
+}
+
+private extension String {
+    var nonEmpty: String? { isEmpty ? nil : self }
 }

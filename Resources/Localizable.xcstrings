@@ -125,6 +125,134 @@
         }
       }
     },
+    "8 (first)": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8 แรก"
+          }
+        }
+      }
+    },
+    "8 (second)": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8 หลัง"
+          }
+        }
+      }
+    },
+    "Asalha Bucha": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันอาสาฬหบูชา"
+          }
+        }
+      }
+    },
+    "Buddhist Lent Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันเข้าพรรษา"
+          }
+        }
+      }
+    },
+    "Buddhist holy day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันพระ"
+          }
+        }
+      }
+    },
+    "Buddhist holy days": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันพระ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仏日（ワンプラ）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "불교 재일"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "佛日"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "佛日"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buddhistische Feiertage (Wan Phra)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jours saints bouddhistes"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Días sagrados budistas"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dias sagrados budistas"
+          }
+        }
+      }
+    },
+    "Chakri Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันจักรี"
+          }
+        }
+      }
+    },
+    "Chulalongkorn Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันปิยมหาราช"
+          }
+        }
+      }
+    },
     "Click to change format": {
       "localizations": {
         "th": {
@@ -179,6 +307,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Clique para mudar o formato"
+          }
+        }
+      }
+    },
+    "Constitution Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันรัฐธรรมนูญ"
           }
         }
       }
@@ -295,6 +433,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copiar data curta"
+          }
+        }
+      }
+    },
+    "Coronation Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันฉัตรมงคล"
+          }
+        }
+      }
+    },
+    "End of Buddhist Lent": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันออกพรรษา"
+          }
+        }
+      }
+    },
+    "Father’s Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันพ่อแห่งชาติ"
           }
         }
       }
@@ -481,6 +649,36 @@
         }
       }
     },
+    "King Bhumibol Memorial Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันนวมินทรมหาราช"
+          }
+        }
+      }
+    },
+    "King’s Birthday": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันเฉลิมพระชนมพรรษาพระบาทสมเด็จพระเจ้าอยู่หัว"
+          }
+        }
+      }
+    },
+    "Labour Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันแรงงานแห่งชาติ"
+          }
+        }
+      }
+    },
     "Language": {
       "localizations": {
         "th": {
@@ -535,6 +733,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Idioma"
+          }
+        }
+      }
+    },
+    "Loy Krathong": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันลอยกระทง"
+          }
+        }
+      }
+    },
+    "Makha Bucha": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันมาฆบูชา"
           }
         }
       }
@@ -597,6 +815,36 @@
         }
       }
     },
+    "Mother’s Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันแม่แห่งชาติ"
+          }
+        }
+      }
+    },
+    "New Year’s Day": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันขึ้นปีใหม่"
+          }
+        }
+      }
+    },
+    "New Year’s Eve": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันสิ้นปี"
+          }
+        }
+      }
+    },
     "Open at login": {
       "localizations": {
         "th": {
@@ -651,6 +899,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abrir ao iniciar sessão"
+          }
+        }
+      }
+    },
+    "Queen Suthida’s Birthday": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันเฉลิมพระชนมพรรษาสมเด็จพระราชินี"
           }
         }
       }
@@ -829,6 +1087,16 @@
         }
       }
     },
+    "Songkran": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันสงกรานต์"
+          }
+        }
+      }
+    },
     "Start week on": {
       "localizations": {
         "th": {
@@ -945,6 +1213,122 @@
         }
       }
     },
+    "Thai calendar": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปฏิทินไทย"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タイの暦"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "태국 달력"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "泰国历法"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "泰國曆法"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thailändischer Kalender"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendrier thaï"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendario tailandés"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendário tailandês"
+          }
+        }
+      }
+    },
+    "Thai holidays": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันหยุดไทย"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タイの祝日"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "태국 공휴일"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "泰国节假日"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "泰國假日"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feiertage in Thailand"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jours fériés thaïlandais"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Festivos de Tailandia"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feriados da Tailândia"
+          }
+        }
+      }
+    },
     "Today": {
       "localizations": {
         "th": {
@@ -999,6 +1383,94 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hoje"
+          }
+        }
+      }
+    },
+    "Visakha Bucha": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันวิสาขบูชา"
+          }
+        }
+      }
+    },
+    "Waning day %lld, lunar month %@": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แรม %1$lld ค่ำ เดือน %2$@"
+          }
+        }
+      }
+    },
+    "Waxing and waning moon": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้างขึ้นข้างแรม"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月の満ち欠け"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "달의 차고 기욺"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月相（盈亏）"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月相（盈虧）"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu- und abnehmender Mond"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lune croissante et décroissante"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Luna creciente y menguante"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lua crescente e minguante"
+          }
+        }
+      }
+    },
+    "Waxing day %lld, lunar month %@": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ขึ้น %1$lld ค่ำ เดือน %2$@"
           }
         }
       }
