@@ -15,7 +15,6 @@ struct CalendarView: View {
     @AppStorage("showLunar") private var lunarRaw = ""
     @State private var month = Date()
     @State private var selected: Date?
-    @State private var launchAtLogin = LaunchAtLogin.isEnabled
 
     private var language: String { AppLanguage.resolve(langRaw) }
     private var era: Era { Era.resolve(eraRaw, language: language) }
@@ -25,9 +24,6 @@ struct CalendarView: View {
 
     private var thaiDefault: Bool { language == "th" || Locale.current.region?.identifier == "TH" }
     private func flag(_ raw: String) -> Bool { raw.isEmpty ? thaiDefault : raw == "1" }
-    private func flagBinding(_ raw: Binding<String>) -> Binding<Bool> {
-        Binding(get: { flag(raw.wrappedValue) }, set: { raw.wrappedValue = $0 ? "1" : "0" })
-    }
     private var showHolyDays: Bool { flag(holyRaw) }
     private var showHolidays: Bool { flag(holidaysRaw) }
     private var showLunar: Bool { flag(lunarRaw) }
@@ -67,7 +63,6 @@ struct CalendarView: View {
         .onAppear {
             month = clock.today
             selected = nil
-            launchAtLogin = LaunchAtLogin.isEnabled // ผู้ใช้อาจไปปิดใน System Settings มา
         }
     }
 
@@ -176,50 +171,22 @@ struct CalendarView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
+        .contextMenu {
+            Button(t.format("Copy date (%@)", text.eraLabel(era))) { copy(text.fullDate(d)) }
+            Button(t("Copy short date")) { copy(text.shortDate(d)) }
+        }
     }
 
-    // MARK: ท้าย: ตั้งค่า + เลือกภาษา + ออก
+    // MARK: ท้าย: ปุ่มตั้งค่า + เลือกภาษา + ออก
     private func footer(_ text: DateText) -> some View {
         HStack {
-            Menu {
-                Toggle(t("Show week numbers"), isOn: $showWeekNumbers)
-                Toggle(t("Open at login"), isOn: $launchAtLogin)
-                    .onChange(of: launchAtLogin) { _, on in LaunchAtLogin.set(on) }
-                Menu(t("Thai calendar")) {
-                    Toggle(t("Buddhist holy days"), isOn: flagBinding($holyRaw))
-                    Toggle(t("Thai holidays"), isOn: flagBinding($holidaysRaw))
-                    Toggle(t("Waxing and waning moon"), isOn: flagBinding($lunarRaw))
-                }
-                Menu(t("Year system")) {
-                    Picker("", selection: Binding(get: { era.rawValue }, set: { eraRaw = $0 })) {
-                        ForEach(Era.allCases) { e in
-                            Text(verbatim: "\(text.eraName(e)) (\(text.eraLabel(e)))").tag(e.rawValue)
-                        }
-                    }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
-                }
-                Menu(t("Start week on")) {
-                    Picker("", selection: $firstWeekday) {
-                        Text(t("Region default")).tag(0)
-                        Divider()
-                        ForEach([1, 2, 7], id: \.self) { Text(text.weekdayName($0)).tag($0) }
-                    }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
-                }
-                Divider()
-                Button(t.format("Copy date (%@)", text.eraLabel(era))) { copy(text.fullDate(selected ?? clock.today)) }
-                Button(t("Copy short date")) { copy(text.shortDate(selected ?? clock.today)) }
-                Divider()
-                Button(t("Help")) { NSWorkspace.shared.open(text.siteURL("support/")) }
-                Button(t("Mojozoft website")) { NSWorkspace.shared.open(text.siteURL("")) }
-            } label: { Image(systemName: "ellipsis") }
-            .menuStyle(.button)
-            .buttonStyle(.borderless)
-            .menuIndicator(.hidden)
-            .focusable(false)
-            .fixedSize()
+            // ตั้งค่า = หน้าต่างของตัวเอง (SettingsView)
+            Button { SettingsWindow.show() } label: { Image(systemName: "gearshape") }
+                .buttonStyle(.borderless)
+                .help(t("Settings"))
+                .focusable(false)
+                .keyboardShortcut(",")
             Spacer()
             // เลือกภาษา (ป้ายบอกภาษาปัจจุบัน)
             Menu {

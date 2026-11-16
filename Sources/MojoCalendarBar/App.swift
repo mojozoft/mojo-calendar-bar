@@ -5,13 +5,25 @@ import ServiceManagement
 @main
 struct MojoCalendarBarApp: App {
     @StateObject private var clock = DayClock()
+    // ค่าเดียวกับใน CalendarView — ไอคอนต้องเปลี่ยนทันทีที่ผู้ใช้เลือก
+    @AppStorage("lang") private var langRaw = AppLanguage.system
+    @AppStorage("era") private var eraRaw = ""
+    @AppStorage("iconStyle") private var iconStyle = 0
+    @AppStorage("iconColor") private var iconColor = ""
+    @AppStorage("iconContent") private var iconContent = 0
 
     var body: some Scene {
         MenuBarExtra {
             CalendarView()
                 .environmentObject(clock)
         } label: {
-            Image(nsImage: MenuIcon.make(day: Calendar.localGregorian.component(.day, from: clock.today)))
+            let language = AppLanguage.resolve(langRaw)
+            let text = DateText(language: language, era: Era.resolve(eraRaw, language: language), firstWeekday: 0)
+            Image(nsImage: MenuIcon.make(
+                text: text.menuBarText(clock.today, content: IconContent(rawValue: iconContent) ?? .day),
+                style: IconStyle(rawValue: iconStyle) ?? .filled,
+                color: IconColor(rawValue: iconColor) ?? .system))
+            .accessibilityLabel(text.fullDate(clock.today))
         }
         .menuBarExtraStyle(.window)
     }
@@ -40,33 +52,6 @@ final class DayClock: ObservableObject {
     private func tick() {
         let now = Date()
         if !Calendar.localGregorian.isDate(now, inSameDayAs: today) { today = now }
-    }
-}
-
-/// ไอคอนบนแถบเมนู: กรอบปฏิทินเล็ก ๆ + เลขวันที่ (template image ⇒ เปลี่ยนสีตามธีมเอง)
-enum MenuIcon {
-    static func make(day: Int) -> NSImage {
-        let size = NSSize(width: 22, height: 16)
-        let img = NSImage(size: size, flipped: false) { rect in
-            // กรอบทึบมุมมน แล้วเจาะตัวเลขออก (ตัวเลข = โปร่ง เห็นสีแถบเมนู)
-            let box = NSRect(x: 1, y: 0.5, width: 20, height: 15)
-            NSColor.black.setFill()
-            NSBezierPath(roundedRect: box, xRadius: 4, yRadius: 4).fill()
-
-            let text = "\(day)" as NSString
-            let attrs: [NSAttributedString.Key: Any] = [
-                .font: NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .bold),
-                .foregroundColor: NSColor.black,
-            ]
-            let ts = text.size(withAttributes: attrs)
-            NSGraphicsContext.current?.compositingOperation = .destinationOut
-            text.draw(at: NSPoint(x: box.midX - ts.width / 2, y: box.midY - ts.height / 2),
-                      withAttributes: attrs)
-            NSGraphicsContext.current?.compositingOperation = .sourceOver
-            return true
-        }
-        img.isTemplate = true
-        return img
     }
 }
 

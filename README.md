@@ -46,6 +46,9 @@
 
 - ภาษาอื่น + ถิ่นไทย (เช่น `en_TH`) ระบบถือว่าปีเริ่มต้นคือ พ.ศ. แล้วแปะศักราชเองทุกรูปแบบ ("10/2026 A") ⇒ locale ของ `DateFormatter` ต้องมี `@calendar=<ระบบปี>`
 - กฎพหูพจน์ (stringsdict) หายถ้าแปลงผลของ `localizedString` เป็น Swift `String` ก่อน format ⇒ ผ่าน `NSString(format:locale:arguments:)`
+- หน้าต่างตั้งค่า: `openSettings()` / Settings scene จาก MenuBarExtra ในแอป LSUIElement กดแล้วเงียบ ⇒ `SettingsWindow` สร้าง NSWindow เอง + แถบแท็บทำเอง (TabView นอก Settings scene ไม่ได้แท็บแบบแถบเครื่องมือ) · เปิดจากปุ่มใน popover ต้อง `orderFrontRegardless` + ทำซ้ำรอบถัดไป
+- ทดสอบด้วย `cliclick` ใน popover บางทีคลิกไม่ถึงปุ่ม (ปุ่มเลื่อนเดือนก็ไม่ติด) ⇒ ยืนยันด้วย AX: `perform action "AXPress" of (first button of UI element 1 of window 1 whose help is "ตั้งค่า")`
+- ไอคอนแถบเมนู (`MenuIcon.swift`): `iconStyle` 0 มีพื้น/1 กรอบ/2 ไม่มีพื้น · `iconColor` "" = template · `iconContent` 0 วัน/1 +เดือน/3 +ปีย่อ/2 +ปีเต็ม (เลขดิบห้ามเปลี่ยน — เป็นค่าที่ผู้ใช้จำไว้)
 
 ## จันทรคติ · วันพระ · วันหยุดไทย
 - `ThaiLunar.swift` = port ของ pythaidate (MIT · `THIRD_PARTY_NOTICES.md`) — ตรวจเทียบต้นฉบับ Python ทุกวัน 1900–2100 (73,414 วัน) ตรง 100%

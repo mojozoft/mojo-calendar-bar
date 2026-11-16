@@ -157,6 +157,23 @@ struct DateText {
     /// "21 ต.ค. 69"
     func shortDate(_ date: Date) -> String { string(date, "yyMMMd") }
 
+    /// ข้อความบนไอคอนแถบเมนู: "16" · "16 พ.ย." / "Nov 16" · "16 พ.ย. 69" · "16 พ.ย. 2569"
+    /// เลขวันใช้ Gregorian ของเครื่อง (ตรงกันทุกระบบปี) · เดือนไม่มีปี ⇒ ไม่ต้องมีศักราช
+    func menuBarText(_ date: Date, content: IconContent) -> String {
+        switch content {
+        case .day:
+            return "\(Calendar.localGregorian.component(.day, from: date))"
+        case .dayMonth:
+            let f = formatter("MMMd")
+            f.timeZone = .current
+            return f.string(from: date)
+        case .dayMonthShortYear:
+            return shortDate(date) // ปีย่อ: "16 พ.ย. 69"
+        case .dayMonthYear:
+            return string(date, "yMMMd") // ปีเต็ม: "16 พ.ย. 2569" · "Nov 16, 2026"
+        }
+    }
+
     /// หัวคอลัมน์วัน เรียงตามวันเริ่มสัปดาห์ · weekday 1 = อาทิตย์
     /// ใช้ตัวย่อสุดถ้าไม่ซ้ำกัน (ไทย "อา จ อ" · ญี่ปุ่น "日 月") ไม่งั้นแบบสั้น (อังกฤษ S/T ซ้ำ ⇒ "Sun Mon")
     func weekdayHeaders() -> [(weekday: Int, text: String)] {
