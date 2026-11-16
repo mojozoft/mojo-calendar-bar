@@ -6,6 +6,11 @@ THAI CALENDAR, BUILT IN
 • Thai public holidays and important days: Makha Bucha, Visakha Bucha, Asalha Bucha, Buddhist Lent, Songkran, Loy Krathong and more
 • Each feature can be switched on or off on its own
 
+YOUR ICON, YOUR WAY
+• Filled, outline or no background
+• Match the menu bar or pick one of 8 colors
+• Show the day, day and month, or day, month and year (short or full)
+
 ANY YEAR SYSTEM
 • Gregorian (AD), Buddhist Era (BE), Japanese (Reiwa) and Republic of China (Minguo)
 • One click to switch between your local era and AD
@@ -14,7 +19,8 @@ MADE FOR EVERYONE
 • 10 languages: English, Thai, Japanese, Korean, Simplified and Traditional Chinese, German, French, Spanish and Portuguese (Brazil)
 • Month and weekday names follow your language; the week starts on the day your region uses
 • Optional week numbers
-• Copy today's date in full or short form
+• Copy any date in full or short form (right-click the date line)
+• Every option in one Settings window
 
 LIGHT AND PRIVATE
 • Native macOS app with the system glass look

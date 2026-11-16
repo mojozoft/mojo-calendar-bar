@@ -1,5 +1,6 @@
-"""อัปภาพหน้าจอ Mac (APP_DESKTOP) จาก store/screenshots/<locale>/*.png ขึ้นเวอร์ชัน macOS ปัจจุบัน
-ข้ามไฟล์ชื่อซ้ำที่มีอยู่แล้ว · จบแล้วพิมพ์สถานะ (UPLOAD_COMPLETE → COMPLETE ใช้ 1–5 นาที)"""
+"""อัปภาพหน้าจอ Mac (APP_DESKTOP) จาก store/screenshots/<locale>/*.png ขึ้นเวอร์ชัน macOS ล่าสุด
+แทนทั้งชุด: ลบภาพเดิมในชุดก่อน (เวอร์ชันใหม่ ASC ก๊อปภาพรุ่นก่อนมา ชื่อ 01.png ซ้ำกัน — ถ้าข้ามชื่อซ้ำ ภาพใหม่จะไม่ขึ้น)
+จบแล้วพิมพ์สถานะ (UPLOAD_COMPLETE → COMPLETE ใช้ 1–5 นาที)"""
 import os, sys, glob, hashlib, subprocess, time
 sys.path.insert(0, os.path.expanduser('~/Developer/mojozoft/ginzii-com/projects/ginzii-ios/scripts/asc'))
 from asc import call  # noqa: E402
@@ -7,7 +8,10 @@ from asc import call  # noqa: E402
 APP = '6835091274'
 DT = 'APP_DESKTOP'
 S = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'screenshots')
-VID = call('GET', f'/v1/apps/{APP}/appStoreVersions?filter[platform]=MAC_OS')['data'][0]['id']
+v = call('GET', f'/v1/apps/{APP}/appStoreVersions?filter[platform]=MAC_OS')['data'][0]
+if v['attributes']['appStoreState'] not in ('PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED', 'REJECTED', 'METADATA_REJECTED'):
+    sys.exit(f"เวอร์ชันล่าสุด {v['attributes']['versionString']} อยู่สถานะ {v['attributes']['appStoreState']} แก้ภาพไม่ได้ — สร้างเวอร์ชันใหม่ใน ASC ก่อน")
+VID = v['id']
 locs = {x['attributes']['locale']: x['id'] for x in call('GET', f'/v1/appStoreVersions/{VID}/appStoreVersionLocalizations')['data']}
 for loc, lid in locs.items():
     files = sorted(glob.glob(f'{S}/{loc}/*.png'))
@@ -18,11 +22,11 @@ for loc, lid in locs.items():
     sid = st[0]['id'] if st else call('POST', '/v1/appScreenshotSets', {'data': {'type': 'appScreenshotSets',
         'attributes': {'screenshotDisplayType': DT},
         'relationships': {'appStoreVersionLocalization': {'data': {'type': 'appStoreVersionLocalizations', 'id': lid}}}}})['data']['id']
-    have = {x['attributes']['fileName'] for x in call('GET', f'/v1/appScreenshotSets/{sid}/appScreenshots')['data']}
+    for x in call('GET', f'/v1/appScreenshotSets/{sid}/appScreenshots')['data']:
+        call('DELETE', f"/v1/appScreenshots/{x['id']}")
+        print(loc, x['attributes']['fileName'], 'ลบภาพเดิม')
     for f in files:
         name = os.path.basename(f)
-        if name in have:
-            print(loc, name, 'มีแล้ว ข้าม'); continue
         data = open(f, 'rb').read()
         r = call('POST', '/v1/appScreenshots', {'data': {'type': 'appScreenshots', 'attributes': {'fileName': name, 'fileSize': len(data)},
                  'relationships': {'appScreenshotSet': {'data': {'type': 'appScreenshotSets', 'id': sid}}}}})['data']

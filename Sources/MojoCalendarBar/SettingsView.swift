@@ -115,6 +115,7 @@ private struct TabButton: View {
         }
         .buttonStyle(.plain)
         .focusable(false) // ไม่งั้นแท็บแรกมีกรอบโฟกัสฟ้าค้างตอนเปิดหน้าต่าง
+        .accessibilityLabel(title)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

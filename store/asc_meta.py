@@ -12,7 +12,9 @@ from asc import call  # noqa: E402
 
 APP = '6835091274'
 GINZII_APP = '6832027905'  # ก๊อปผู้ติดต่อสำหรับรีวิวจากแอปนี้
-VERSION = '1.0.0'
+# เลขรุ่นมีที่เดียว: MARKETING_VERSION ใน project.yml
+import re  # noqa: E402
+VERSION = re.search(r'MARKETING_VERSION: "([^"]+)"', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'project.yml')).read()).group(1)
 COPYRIGHT = '2026 Mojozoft'
 ROOT = os.path.dirname(os.path.abspath(__file__))
 APPLY = os.environ.get('APPLY') == '1'
@@ -31,6 +33,9 @@ def say(*a):
 vers = call('GET', f'/v1/apps/{APP}/appStoreVersions?filter[platform]=MAC_OS')['data']
 v = vers[0]
 VID = v['id']
+# กันแก้เวอร์ชันที่ส่งรีวิว/ขายอยู่ (เคยเกือบเปลี่ยนชื่อ 1.0.0 ที่รอรีวิวเป็น 1.1.0) ⇒ ต้องสร้างเวอร์ชันใหม่ใน ASC ก่อน
+if v['attributes']['appStoreState'] not in ('PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED', 'REJECTED', 'METADATA_REJECTED'):
+    sys.exit(f"เวอร์ชันล่าสุด {v['attributes']['versionString']} อยู่สถานะ {v['attributes']['appStoreState']} แก้ไม่ได้ — สร้างเวอร์ชัน {VERSION} ใน ASC ก่อน")
 if v['attributes']['versionString'] != VERSION or v['attributes'].get('copyright') != COPYRIGHT:
     say('version', v['attributes']['versionString'], '→', VERSION, '· copyright', COPYRIGHT)
     if APPLY:
