@@ -147,7 +147,14 @@ private struct GeneralSettings: View {
         Form {
             Section(t("General")) {
                 Toggle(t("Open at login"), isOn: $launchAtLogin)
-                    .onChange(of: launchAtLogin) { _, on in LaunchAtLogin.set(on) }
+                    .onChange(of: launchAtLogin) { _, on in
+                        // onAppear อ่านค่าจริงมาแล้วค่าเท่ากัน ⇒ ไม่ต้องสั่งซ้ำ (unregister ตอนไม่ได้ลงทะเบียน = error)
+                        guard on != LaunchAtLogin.isEnabled else { return }
+                        LaunchAtLogin.set(on)
+                        // ลงทะเบียนไม่สำเร็จ / ต้องรออนุมัติใน System Settings ⇒ สวิตช์กลับไปตามค่าจริง
+                        let real = LaunchAtLogin.isEnabled
+                        if real != on { launchAtLogin = real }
+                    }
                 Picker(t("Language"), selection: $langRaw) {
                     Text(t("System language")).tag(AppLanguage.system)
                     Divider()
@@ -206,7 +213,7 @@ private struct IconSettings: View {
                 LabeledContent(t("Color")) {
                     HStack(spacing: 7) {
                         ForEach(IconColor.allCases) { c in
-                            ColorDot(color: c, selected: c == color) { iconColor = c.rawValue }
+                            ColorDot(color: c, label: t(c.nameKey), selected: c == color) { iconColor = c.rawValue }
                                 .help(t(c.nameKey))
                         }
                     }
@@ -246,6 +253,7 @@ private struct MenuBarSample: View {
 /// จุดสีแบบตัวเลือกสีเน้นของ System Settings
 private struct ColorDot: View {
     let color: IconColor
+    let label: String // ชื่อสีที่แปลแล้ว (VoiceOver)
     let selected: Bool
     let action: () -> Void
 
@@ -258,7 +266,7 @@ private struct ColorDot: View {
                 .overlay(Circle().strokeBorder(selected ? Color.primary.opacity(0.7) : .clear, lineWidth: 1.5))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(color.nameKey)
+        .accessibilityLabel(label)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
